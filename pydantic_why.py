@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ValidationError, EmailStr, Field, field_validator, model_validator
+from pydantic import BaseModel, ValidationError, EmailStr, Field, field_validator, model_validator,computed_field
 from typing import Optional, List, Dict, Annotated
 
 class Patient(BaseModel):
@@ -6,10 +6,17 @@ class Patient(BaseModel):
     email: Optional[EmailStr] = None
     age: int = Field(..., gt=0, lt=100) # Adjusted to match your validator intent
     weight: Optional[float] = Field(None, gt=0, strict=True)
+    height: Optional[float] = Field(None, gt=0, strict=True)
     married: Optional[bool] = None
     allergies: Optional[List[str]] = None
     contact: Optional[Dict[str, str]] = None
-
+    
+    @computed_field
+    @property
+    def bmi(self) -> Optional[float]:
+        if self.weight and self.height:
+            return round(self.weight / ((self.height / 100) ** 2), 2)
+        return None
     @model_validator(mode='after')
     def validate_patient(self):
         # Prevent crash if contact is None
@@ -46,6 +53,7 @@ patient_info = {
     'email': 'john.doe@gmail.com', 
     'age': '50', 
     'weight': 70.5, 
+    'height': 175.0,
     'married': False
 }  
 
@@ -53,7 +61,7 @@ try:
     patient1 = Patient(**patient_info)
     
     def insert_patient_data(patient: Patient):
-        print(patient.name, patient.email, patient.age, patient.weight, patient.married, patient.allergies, patient.contact)                     
+        print(patient.name, patient.email, patient.age, patient.weight, patient.height, patient.married, patient.allergies, patient.contact,patient.bmi)                     
         return True
 
     insert_patient_data(patient1)

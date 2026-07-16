@@ -1,15 +1,16 @@
-from pydantic import BaseModel, ValidationError
-from typing import Optional,List,Dict
+from pydantic import BaseModel, ValidationError,EmailStr,Field
+from typing import Optional,List,Dict,Annotated
 class Patient(BaseModel):
-    name: str
-    age: int
-    weight: float = None
-    married: bool = None
-    allergies: List[str] = None
-    contact: Dict[str,str] = None
-patient_info={'name': 'John Doe', 'age': 50, 'weight': 70.5}  # Example data with age as an integer and weight as a float
+    name: Annotated[str, Field(..., description="The name of the patient in less than 100 characters", max_length=100)]
+    email: Optional[EmailStr] = None
+    age: int = Field(..., gt=0,lt=120) 
+    weight: float = Field(None, gt=0,strict=True)
+    married: bool = Field(None)
+    allergies: List[str] = Field(None)
+    contact: Dict[str,str] = Field(None)
+patient_info={'name': 'John Doe', 'email': 'john.doe@example.com', 'age': 50, 'weight': 70.5,'married': False}  # Example data with age as an integer and weight as a float
 patient1=Patient(**patient_info)  # This will create a valid Patient instance
-def insert_patient_data(patient:dict):
+def insert_patient_data(patient:Patient):
     """
     Inserts patient data into the database.
 
@@ -28,7 +29,7 @@ def insert_patient_data(patient:dict):
         # Assuming we have a database connection and a patients table
         # This is a placeholder for actual database insertion logic
         # db.insert('patients', patient_data)
-        print(patient.name, patient.age,patient.weight,patient.married,patient.allergies,patient.contact)                     
+        print(patient.name, patient.email, patient.age,patient.weight,patient.married,patient.allergies,patient.contact)                     
         return True
     except Exception as e:
         print(f"Error inserting patient data: {e}")
@@ -54,4 +55,4 @@ def update_patient_data(patient:Patient):
     except Exception as e:
         print(f"Error updating patient data: {e}")
         return False
-update_patient_data(patient1)  # Example usage of the function with a string for age, which should be an integer.
+insert_patient_data(patient1)  # Example usage of the function with a string for age, which should be an integer.

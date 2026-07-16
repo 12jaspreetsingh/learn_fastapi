@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ValidationError,EmailStr,Field
+from pydantic import BaseModel, ValidationError,EmailStr,Field,field_validator
 from typing import Optional,List,Dict,Annotated
 class Patient(BaseModel):
     name: Annotated[str, Field(..., description="The name of the patient in less than 100 characters", max_length=100)]
@@ -8,7 +8,21 @@ class Patient(BaseModel):
     married: bool = Field(None)
     allergies: List[str] = Field(None)
     contact: Dict[str,str] = Field(None)
-patient_info={'name': 'John Doe', 'email': 'john.doe@example.com', 'age': 50, 'weight': 70.5,'married': False}  # Example data with age as an integer and weight as a float
+
+    @field_validator('email')
+    @classmethod
+    def validate_email(cls, v):
+        valid_domain=['hdfc.com','gmail.com','yahoo.com']
+        domain_name=v.split('@')[-1]
+        if domain_name not in valid_domain:
+            raise ValueError("Invalid email domain")
+        return v
+    @field_validator('name')
+    @classmethod
+    def transform_name(cls, v):
+        return v.upper()  # Capitalize the first letter of each word in the name
+
+patient_info={'name': 'John Doe', 'email': 'john.doe@gmail.com', 'age': 50, 'weight': 70.5,'married': False}  # Example data with age as an integer and weight as a float
 patient1=Patient(**patient_info)  # This will create a valid Patient instance
 def insert_patient_data(patient:Patient):
     """

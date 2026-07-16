@@ -1,8 +1,13 @@
 from pydantic import BaseModel, ValidationError
+from typing import Optional,List,Dict
 class Patient(BaseModel):
     name: str
     age: int
-patient_info={'name': 'John Doe', 'age': 50}  # Example data with age as an integer
+    weight: float = None
+    married: bool = None
+    allergies: List[str] = None
+    contact: Dict[str,str] = None
+patient_info={'name': 'John Doe', 'age': 50, 'weight': 70.5}  # Example data with age as an integer and weight as a float
 patient1=Patient(**patient_info)  # This will create a valid Patient instance
 def insert_patient_data(patient:dict):
     """
@@ -11,6 +16,10 @@ def insert_patient_data(patient:dict):
     Args:
         name (str): The name of the patient.
         age (int): The age of the patient.
+        weight (float): The weight of the patient.
+        married (bool): The marital status of the patient.
+        allergies (List[str]): The allergies of the patient.
+        contact (Dict[str,str]): The contact information of the patient.
 
     Returns:
         bool: True if insertion was successful, False otherwise.
@@ -19,7 +28,7 @@ def insert_patient_data(patient:dict):
         # Assuming we have a database connection and a patients table
         # This is a placeholder for actual database insertion logic
         # db.insert('patients', patient_data)
-        print(patient.name, patient.age)                     
+        print(patient.name, patient.age,patient.weight,patient.married,patient.allergies,patient.contact)                     
         return True
     except Exception as e:
         print(f"Error inserting patient data: {e}")
@@ -27,6 +36,7 @@ def insert_patient_data(patient:dict):
 def update_patient_data(patient:Patient):
     """
     Updates patient data in the database.
+
 
     Args:
         name (str): The name of the patient.
@@ -39,7 +49,7 @@ def update_patient_data(patient:Patient):
         # Assuming we have a database connection and a patients table
         # This is a placeholder for actual database update logic
         # db.update('patients', patient_data)
-        print(patient.name, patient.age)                     
+        print(patient.name, patient.age,patient.weight,patient.married,patient.allergies,patient.contact)                     
         return True
     except Exception as e:
         print(f"Error updating patient data: {e}")

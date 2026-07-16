@@ -21,8 +21,15 @@ class Patient(BaseModel):
     @classmethod
     def transform_name(cls, v):
         return v.upper()  # Capitalize the first letter of each word in the name
+    @field_validator('age',mode='after')
+    @classmethod
+    def validate_age(cls, v):
+        if 0<v<100:
+            return v
+        else:
+            raise ValueError("Age must be between 0 and 100")
 
-patient_info={'name': 'John Doe', 'email': 'john.doe@gmail.com', 'age': 50, 'weight': 70.5,'married': False}  # Example data with age as an integer and weight as a float
+patient_info={'name': 'John Doe', 'email': 'john.doe@gmail.com', 'age': '50', 'weight': 70.5,'married': False}  # Example data with age as an integer and weight as a float
 patient1=Patient(**patient_info)  # This will create a valid Patient instance
 def insert_patient_data(patient:Patient):
     """

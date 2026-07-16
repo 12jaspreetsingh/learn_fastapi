@@ -23,6 +23,8 @@ patient_info = {
 }
 try:
     patient = Patient(**patient_info)
-    print(patient)
+    temp=patient.model_dump_json()
+    print(temp)
+    print(type(temp))
 except ValidationError as e:
     print(e.json())

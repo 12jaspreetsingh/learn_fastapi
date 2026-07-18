@@ -49,16 +49,5 @@
         "weight": 75,
         "bmi": 31.22,
         "verdict": "Obese"
-    },
-    "P006": {
-        "id": "P006",
-        "name": "jass",
-        "city": "JAL",
-        "age": 22,
-        "gender": "Male",
-        "height": 1.8,
-        "weight": 60.0,
-        "bmi": 18.52,
-        "bmi_category": "Normal weight"
     }
 }

@@ -1,6 +1,6 @@
 from fastapi import FastAPI,Path,HTTPException,Query
 import json
-from typing import Dict,Annotated,Literal
+from typing import Dict,Annotated,Literal,Optional
 from pydantic import BaseModel, ValidationError, EmailStr, Field, field_validator, model_validator, computed_field
 app = FastAPI()
 class Patient(BaseModel):
@@ -28,6 +28,15 @@ class Patient(BaseModel):
             return "Overweight"
         else:
             return "Obesity"
+class PatientUpdate(BaseModel):
+    name: Annotated[Optional[str], Field(None, description="The name of the patient")]
+    city: Annotated[Optional[str], Field(None, description="The city of the patient")]
+    age: Annotated[Optional[int], Field(None, gt=0, lt=120, description="The age of the patient")]
+    gender: Annotated[Optional[Literal["Male", "Female", "Other"]], Field(None, description="The gender of the patient")]
+    height: Annotated[Optional[float], Field(None, gt=0, lt=2.5, description="The height of the patient in meters")]
+    weight: Annotated[Optional[float], Field(None, gt=0, lt=300, description="The weight of the patient in kilograms")]
+
+
 def load_data():
     # Placeholder for data loading logic
     with open("patients.json", "r") as file:
@@ -73,3 +82,18 @@ def create_patient(patient: Patient):
     with open("patients.json", "w") as file:
         json.dump(data, file, indent=4)
     return {"message": "Patient created successfully", "patient": patient.model_dump()}
+@app.put("/edit/{patient_id}")
+def edit_patient(patient_id: str, patient_update: PatientUpdate):
+    data = load_data()
+    if patient_id not in data:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    existing_patient_info = data[patient_id]
+    updated_patient_data = existing_patient_info.copy()
+    update_data = patient_update.model_dump(exclude_unset=True)
+    updated_patient_data.update(update_data)
+    updated_patient_data['id'] = patient_id  # Ensure the error is not raised by including the 'id' field in the updated data
+    updated_patient = Patient(**updated_patient_data)
+    data[patient_id] = updated_patient.model_dump()
+    with open("patients.json", "w") as file:   
+        json.dump(data, file, indent=4)
+    return {"message": "Patient updated successfully", "patient": updated_patient.model_dump()}

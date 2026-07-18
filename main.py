@@ -8,7 +8,7 @@ class Patient(BaseModel):
     name: Annotated[str, Field(..., description="The name of the patient")]
     city: Annotated[str, Field(..., description="The city of the patient")]
     age: Annotated[int, Field(...,gt=0,lt=120, description="The age of the patient")]
-    gender: Annotated[Literal["Male", "Female", "Other"], Field(..., description="The gender of the patient")]
+    gender: Annotated[Literal["male", "female", "other"], Field(..., description="The gender of the patient")]
     height: Annotated[float, Field(..., gt=0,lt=2.5, description="The height of the patient in meters")]
     weight: Annotated[float, Field(...,gt=0,lt=300, description="The weight of the patient in kilograms")] 
 
@@ -32,7 +32,7 @@ class PatientUpdate(BaseModel):
     name: Annotated[Optional[str], Field(None, description="The name of the patient")]
     city: Annotated[Optional[str], Field(None, description="The city of the patient")]
     age: Annotated[Optional[int], Field(None, gt=0, lt=120, description="The age of the patient")]
-    gender: Annotated[Optional[Literal["Male", "Female", "Other"]], Field(None, description="The gender of the patient")]
+    gender: Annotated[Optional[Literal["male", "female", "other"]], Field(None, description="The gender of the patient")]
     height: Annotated[Optional[float], Field(None, gt=0, lt=2.5, description="The height of the patient in meters")]
     weight: Annotated[Optional[float], Field(None, gt=0, lt=300, description="The weight of the patient in kilograms")]
 
@@ -94,6 +94,8 @@ def edit_patient(patient_id: str, patient_update: PatientUpdate):
     updated_patient_data['id'] = patient_id  # Ensure the error is not raised by including the 'id' field in the updated data
     updated_patient = Patient(**updated_patient_data)
     data[patient_id] = updated_patient.model_dump()
+    print(updated_patient.model_dump())
     with open("patients.json", "w") as file:   
         json.dump(data, file, indent=4)
+        print("Saved!")
     return {"message": "Patient updated successfully", "patient": updated_patient.model_dump()}

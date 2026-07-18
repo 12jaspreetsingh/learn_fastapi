@@ -30,14 +30,15 @@
         "verdict": "Underweight"
     },
     "P004": {
-        "name": "Arjun Verma",
-        "city": "Mumbai",
+        "id": "P004",
+        "name": "Jass",
+        "city": "Delhi",
         "age": 40,
         "gender": "male",
         "height": 1.8,
-        "weight": 90.0,
-        "bmi": 27.78,
-        "verdict": "Normal"
+        "weight": 78.0,
+        "bmi": 24.07,
+        "bmi_category": "Normal weight"
     },
     "P005": {
         "name": "Neha Sinha",

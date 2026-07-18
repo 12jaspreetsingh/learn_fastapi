@@ -99,3 +99,12 @@ def edit_patient(patient_id: str, patient_update: PatientUpdate):
         json.dump(data, file, indent=4)
         print("Saved!")
     return {"message": "Patient updated successfully", "patient": updated_patient.model_dump()}
+@app.delete("/delete/{patient_id}")
+def delete_patient(patient_id: str):
+    data = load_data()
+    if patient_id not in data:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    deleted_patient = data.pop(patient_id)
+    with open("patients.json", "w") as file:
+        json.dump(data, file, indent=4)
+    return {"message": "Patient deleted successfully", "patient": deleted_patient}

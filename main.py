@@ -24,8 +24,10 @@ class Patient(BaseModel):
             return "Underweight"
         elif 18.5 <= bmi < 24.9:
             return "Normal weight"
+        
         elif 25 <= bmi < 29.9:
             return "Overweight"
+        
         else:
             return "Obesity"
 class PatientUpdate(BaseModel):
@@ -105,6 +107,6 @@ def delete_patient(patient_id: str):
     if patient_id not in data:
         raise HTTPException(status_code=404, detail="Patient not found")
     deleted_patient = data.pop(patient_id)
-    with open("patients.json", "w") as file:
+    with open("patients.json", "w") as file:  
         json.dump(data, file, indent=4)
     return {"message": "Patient deleted successfully", "patient": deleted_patient}
